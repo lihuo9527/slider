@@ -9,18 +9,14 @@
 
 </head>
 
-<body style="margin: 0;">
+<body style="margin: 0;height:1000px;">
     <style>
         .box {
             width: 100%;
             height: 200px;
-            /* position: absolute; */
-            /* transition: 1s; */
-            top: 0;
-            left: 0;
         }
     </style>
-    <div style="width: 320px;position: relative;overflow: hidden;">
+    <div style="width: 100%;position: relative;overflow: hidden;">
         <div class="box" style="background:red;transform: translate3d(0%,0%,0);">
             <span>000000000000</span>
             <!-- <img src="gb.png" alt="" style="width: 100%;"> -->
@@ -42,76 +38,78 @@
         let clientWidth = document.body.clientWidth;
         let img = document.getElementsByClassName('box');
         let moveStatus = 0;
-        // if (img.length < 2) { return };
-        for (let i = 0; i < img.length; i++) {
-            img[i].ontouchstart = function (e) {
-                console.log("开始：" + e.changedTouches[0].clientX)
-                start_x = e.changedTouches[0].clientX
-                start_y = e.changedTouches[0].clientY;
-                moveStatus = 0;
-            };
-            img[i].ontouchmove = function (e) {
-                e.stopPropagation();
-                e.preventDefault();
-                let moveX = e.changedTouches[0].clientX - start_x;
-                let moveY = e.changedTouches[0].clientY - start_y;
-                //  Y轴移动小于X轴 判定为横向滑动
-                if (moveX >= 0) {
-                    console.log('status1', status)
-                    if (status == 2) {
-                        console.log(11)
-                        this.style.transform = `translate3d(0%,${-(i * 100)}%, 0)`;
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
-                    }
-                    status = 1;
-                    moveIndex = i === 0 ? img.length - 1 : i - 1;
-                    this.style.transform = `translate3d(${moveX}px,${-(i * 100)}%, 0)`;
-                    this.parentNode.children[moveIndex].style.transform = `translate3d(${-(clientWidth - moveX)}px,${-(moveIndex * 100)}%,0)`;
-                } else {
-                    console.log('status2', status)
-                    if (status == 1) {
-                        console.log(22)
-                        this.style.transform = `translate3d(0%,${-(i * 100)}%, 0)`;
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(-100%,${-(moveIndex * 100)}%,0)`;
-                    }
-                    status = 2;
-                    moveIndex = i === img.length - 1 ? 0 : i + 1;
-                    if (moveIndex === 1) {
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
-                    }
-                    this.style.transform = `translate3d(${moveX}px,${-(i * 100)}%, 0)`;
-                    this.parentNode.children[moveIndex].style.transform = `translate3d(${(clientWidth - Math.abs(moveX))}px,${-(moveIndex * 100)}%,0)`;
-                }
-
-            };
-            img[i].ontouchend = function (e) {
-                for (let a = 0; a < img.length; a++) {
-                    img[a].style.transition = "0.3s";
-                }
-                let moveX = e.changedTouches[0].clientX - start_x;
-                let moveY = e.changedTouches[0].clientY - start_y;
-                if (moveX >= range && status == 1) {
-                    this.style.transform = `translate3d(100%,${-(i * 100)}%,0)`;
-                    this.parentNode.children[moveIndex].style.transform = `translate3d(0%,${-(moveIndex * 100)}%,0)`;
-                } else if (moveX < range && moveX >= 0 || moveX > -range && moveX <= 0) {
-                    this.style.transform = `translate3d(0%,${-(i * 100)}%,0)`;
-                    if (status == 2) {
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
+        onSliderTouch();
+        function onSliderTouch() {
+            if (img.length < 2) return;
+            for (let i = 0; i < img.length; i++) {
+                img[i].ontouchstart = function (e) {
+                    start_x = e.changedTouches[0].clientX
+                    start_y = e.changedTouches[0].clientY;
+                    moveStatus = 0;
+                };
+                img[i].ontouchmove = function (e) {
+                    e.stopPropagation();
+                    let moveX = e.changedTouches[0].clientX - start_x;
+                    let moveY = e.changedTouches[0].clientY - start_y;
+                    //  Y轴移动小于X轴 判定为横向滑动
+                    if (moveX >= 0) {
+                        console.log('status1', status)
+                        if (status == 2) {
+                            console.log(11)
+                            this.style.transform = `translate3d(0%,${-(i * 100)}%, 0)`;
+                            this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
+                        }
+                        status = 1;
+                        moveIndex = i === 0 ? img.length - 1 : i - 1;
+                        this.style.transform = `translate3d(${moveX}px,${-(i * 100)}%, 0)`;
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(${-(clientWidth - moveX)}px,${-(moveIndex * 100)}%,0)`;
                     } else {
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(-100%,${-(moveIndex * 100)}%,0)`;
+                        console.log('status2', status)
+                        if (status == 1) {
+                            console.log(22)
+                            this.style.transform = `translate3d(0%,${-(i * 100)}%, 0)`;
+                            this.parentNode.children[moveIndex].style.transform = `translate3d(-100%,${-(moveIndex * 100)}%,0)`;
+                        }
+                        status = 2;
+                        moveIndex = i === img.length - 1 ? 0 : i + 1;
+                        if (moveIndex === 1) {
+                            this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
+                        }
+                        this.style.transform = `translate3d(${moveX}px,${-(i * 100)}%, 0)`;
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(${(clientWidth - Math.abs(moveX))}px,${-(moveIndex * 100)}%,0)`;
                     }
 
-                } else if (moveX < -range && moveX < 0 && status == 2) {
-                    this.style.transform = `translate3d(-100%,${-(i * 100)}%,0)`;
-                    this.parentNode.children[moveIndex].style.transform = `translate3d(0%,${-(moveIndex * 100)}%,0)`;
-                }
-                moveStatus = 0;
-                setTimeout(() => {
+                };
+                img[i].ontouchend = function (e) {
                     for (let a = 0; a < img.length; a++) {
-                        img[a].style.transition = "none";
+                        img[a].style.transition = "0.3s";
                     }
-                }, 300);
-            };
+                    let moveX = e.changedTouches[0].clientX - start_x;
+                    let moveY = e.changedTouches[0].clientY - start_y;
+                    if (moveX >= range && status == 1) {
+                        this.style.transform = `translate3d(100%,${-(i * 100)}%,0)`;
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(0%,${-(moveIndex * 100)}%,0)`;
+                    } else if (moveX < range && moveX >= 0 || moveX > -range && moveX <= 0) {
+                        this.style.transform = `translate3d(0%,${-(i * 100)}%,0)`;
+                        if (status == 2) {
+                            this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
+                        } else {
+                            this.parentNode.children[moveIndex].style.transform = `translate3d(-100%,${-(moveIndex * 100)}%,0)`;
+                        }
+
+                    } else if (moveX < -range && moveX < 0 && status == 2) {
+                        this.style.transform = `translate3d(-100%,${-(i * 100)}%,0)`;
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(0%,${-(moveIndex * 100)}%,0)`;
+                    }
+                    moveStatus = 0;
+                    setTimeout(() => {
+                        for (let a = 0; a < img.length; a++) {
+                            img[a].style.transition = "none";
+                        }
+                    }, 300);
+                };
+            }
+
         }
 
     </script>
