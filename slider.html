@@ -41,45 +41,48 @@
         let range = 80;
         let clientWidth = document.body.clientWidth;
         let img = document.getElementsByClassName('box');
+        let moveStatus = 0;
         // if (img.length < 2) { return };
         for (let i = 0; i < img.length; i++) {
             img[i].ontouchstart = function (e) {
                 console.log("开始：" + e.changedTouches[0].clientX)
                 start_x = e.changedTouches[0].clientX
                 start_y = e.changedTouches[0].clientY;
+                moveStatus = 0;
             };
             img[i].ontouchmove = function (e) {
                 e.stopPropagation();
                 e.preventDefault();
                 let moveX = e.changedTouches[0].clientX - start_x;
                 let moveY = e.changedTouches[0].clientY - start_y;
-                if (Math.abs(moveY) < Math.abs(moveX)) {
-                    //  Y轴移动小于X轴 判定为横向滑动
-
-                    if (moveX >= 0) {
-                        moveIndex = i === 0 ? img.length - 1 : i - 1;
-                        this.style.transform = `translate3d(${moveX}px,${-(i * 100)}%, 0)`;
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(${-(clientWidth - moveX)}px,${-(moveIndex * 100)}%,0)`;
-                    } else {
-                        moveIndex = i === img.length - 1 ? 0 : i + 1;
-                        if (moveIndex === 1) {
-                            this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
-                        }
-                        this.style.transform = `translate3d(${moveX}px,${-(i * 100)}%, 0)`;
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(${(clientWidth - Math.abs(moveX))}px,${-(moveIndex * 100)}%,0)`;
+                //  Y轴移动小于X轴 判定为横向滑动
+                if (moveX >= 0) {
+                    console.log('status1', status)
+                    if (status == 2) {
+                        console.log(11)
+                        this.style.transform = `translate3d(0%,${-(i * 100)}%, 0)`;
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
                     }
-
-                } else if (Math.abs(moveY) > Math.abs(moveX)) {
-
-                    //  Y轴移动大于X轴 判定为纵向滑动
-                    // if (moveY > 0) {
-
-                    // } else if (moveY < 0) {
-
-                    // }
+                    status = 1;
+                    moveIndex = i === 0 ? img.length - 1 : i - 1;
+                    this.style.transform = `translate3d(${moveX}px,${-(i * 100)}%, 0)`;
+                    this.parentNode.children[moveIndex].style.transform = `translate3d(${-(clientWidth - moveX)}px,${-(moveIndex * 100)}%,0)`;
+                } else {
+                    console.log('status2', status)
+                    if (status == 1) {
+                        console.log(22)
+                        this.style.transform = `translate3d(0%,${-(i * 100)}%, 0)`;
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(-100%,${-(moveIndex * 100)}%,0)`;
+                    }
+                    status = 2;
+                    moveIndex = i === img.length - 1 ? 0 : i + 1;
+                    if (moveIndex === 1) {
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
+                    }
+                    this.style.transform = `translate3d(${moveX}px,${-(i * 100)}%, 0)`;
+                    this.parentNode.children[moveIndex].style.transform = `translate3d(${(clientWidth - Math.abs(moveX))}px,${-(moveIndex * 100)}%,0)`;
                 }
 
-                console.log("开始：" + e.changedTouches[0].clientX);
             };
             img[i].ontouchend = function (e) {
                 for (let a = 0; a < img.length; a++) {
@@ -87,35 +90,22 @@
                 }
                 let moveX = e.changedTouches[0].clientX - start_x;
                 let moveY = e.changedTouches[0].clientY - start_y;
-                // console.log("结束：" + moveX)
-                if (Math.abs(moveY) < Math.abs(moveX)) {
-                    // Y轴移动小于X轴 判定为横向滑动
-                    if (moveX >= range) {
-                        this.style.transform = `translate3d(100%,${-(i * 100)}%,0)`;
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(0%,${-(moveIndex * 100)}%,0)`;
-                    } else if (moveX < range && moveX >= 0 || moveX > -range && moveX < 0) {
-                        this.style.transform = `translate3d(0%,${-(i * 100)}%,0)`;
-                        if (moveX > -range && moveX < 0) {
-                            this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
-                        } else {
-                            this.parentNode.children[moveIndex].style.transform = `translate3d(-100%,${-(moveIndex * 100)}%,0)`;
-                        }
-
-                    } else if (moveX < -range && moveX < 0) {
-                        this.style.transform = `translate3d(-100%,${-(i * 100)}%,0)`;
-                        this.parentNode.children[moveIndex].style.transform = `translate3d(0%,${-(moveIndex * 100)}%,0)`;
+                if (moveX >= range && status == 1) {
+                    this.style.transform = `translate3d(100%,${-(i * 100)}%,0)`;
+                    this.parentNode.children[moveIndex].style.transform = `translate3d(0%,${-(moveIndex * 100)}%,0)`;
+                } else if (moveX < range && moveX >= 0 || moveX > -range && moveX <= 0) {
+                    this.style.transform = `translate3d(0%,${-(i * 100)}%,0)`;
+                    if (status == 2) {
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(100%,${-(moveIndex * 100)}%,0)`;
+                    } else {
+                        this.parentNode.children[moveIndex].style.transform = `translate3d(-100%,${-(moveIndex * 100)}%,0)`;
                     }
 
+                } else if (moveX < -range && moveX < 0 && status == 2) {
+                    this.style.transform = `translate3d(-100%,${-(i * 100)}%,0)`;
+                    this.parentNode.children[moveIndex].style.transform = `translate3d(0%,${-(moveIndex * 100)}%,0)`;
                 }
-                else if (Math.abs(moveY) > Math.abs(moveX)) {
-                    // Y轴移动大于X轴 判定为纵向滑动
-                    if (moveY >= 50) {
-                        console.log("跳转下一个！")
-                    } else if (moveY < 50 && moveY >= 0 || moveY > -50 && moveY < 0) {
-                        console.log("保持原状！")
-                    } else if (moveY < -50 && moveY < 0) {
-                    }
-                }
+                moveStatus = 0;
                 setTimeout(() => {
                     for (let a = 0; a < img.length; a++) {
                         img[a].style.transition = "none";
